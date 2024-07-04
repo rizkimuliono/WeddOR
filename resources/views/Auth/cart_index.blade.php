@@ -16,7 +16,7 @@
                     </thead>
                     <tbody class="">
                         {{-- @dd($cart->items) --}}
-                        @foreach ($cart->items as $item)
+                        @forelse ($cart->items as $item)
                             <tr>
                                 <td style="text-align:left;">
                                     @if ($item->product->images->isNotEmpty())
@@ -56,10 +56,20 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="6">
+                                <div class="alert alert-warning" role="alert">
+                                  <p class="mb-0">Keranjang Kosong, silahkan pilih produk !</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if (!$cart->items->isEmpty())
             <div class="col-lg-4">
                 <h5 class="section-title position-relative text-uppercase mb-3">
                     <span class="bg-secondary pr-3">Cart Summary</span>
@@ -80,10 +90,11 @@
                             <h5>Total</h5>
                             <h5>Rp{{ number_format($cart->items->sum(function ($item) {return $item->product->price * $item->quantity;}) + 200000,0) }}</h5>
                         </div>
-                        <button class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
+                        <button type="submit" class="btn btn-block btn-primary font-weight-bold my-3 py-3">Proceed To Checkout</button>
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 @endsection

@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - WeddOR</title>
+    <title>Register - WeddOR</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <!-- Customized Bootstrap Stylesheet -->
     <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
     <style>
         body,
@@ -22,7 +21,7 @@
             background-size: cover;
         }
 
-        .login-container {
+        .register-container {
             height: 100%;
             display: flex;
             justify-content: center;
@@ -33,7 +32,7 @@
 
 <body>
     <div class="bg">
-        <div class="container login-container">
+        <div class="container register-container">
 
             <div class="card p-4 shadow-lg">
                 <div class="card-body">
@@ -45,15 +44,25 @@
                                 <span class="h1 text-dark bg-primary px-2 ml-n1">OR</span>
                             </a>
                             <strong class="ml-2">Medan Wedding Markets</strong>
-                            {{-- <img src="{{ asset('template/img/carousel-3.png') }}" class="w-100 h-100" alt="WeddOR Medan Wedding Markets"> --}}
                         </div>
                     </div>
-                    <h3 class="card-title text-center">Login</h3>
-                    <form method="POST" action="{{ route('login') }}">
+                    <h3 class="card-title text-center">Register</h3>
+                    <form method="POST" action="{{ route('register') }}" id="registerForm">
                         @csrf
+                        <input type="hidden" name="level" value="{{ request('level') }}">
+                        <input type="hidden" name="is_vendor" value="{{ request('level') == 'vendor' ? 1 : 0 }}">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required autofocus>
+                            @error('name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                         <div class="form-group">
                             <label for="email">Email address</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required autofocus>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -69,21 +78,39 @@
                                 </span>
                             @enderror
                         </div>
+                        <div class="form-group">
+                            <label for="password_confirmation">Confirm Password</label>
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                        </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        @if(request('level') == 'vendor')
+                        <div class="form-group">
+                            <label for="vendor_name">Vendor Name</label>
+                            <input type="text" class="form-control @error('vendor_name') is-invalid @enderror" id="vendor_name" name="vendor_name" value="{{ old('vendor_name') }}" required>
+                            @error('vendor_name')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="vendor_email">Vendor Email</label>
+                            <input type="email" class="form-control @error('vendor_email') is-invalid @enderror" id="vendor_email" name="vendor_email" value="{{ old('vendor_email') }}" required>
+                            @error('vendor_email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        @endif
+
+                        <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </form>
 
                     <p class="mt-3 justify-content-center">
                         <a href="{{ route('password.request') }}" class="text-danger">Lupa Kata Sandi?</a>
                     </p>
-                    <p class="justify-content-center">Belum punya akun? <a href="{{ route('register', ['level' => 'user']) }}" class="text-danger">Daftar</a></p>
-
-                    <div class="alert alert-info" role="alert">
-                        <p>Punya bisnis terkait pernikahan?</p>
-                        <p class="mb-0">
-                            <a href="{{ route('register', ['level' => 'vendor']) }}" class="text-danger">Gabung menjadi vendor gratis</a>
-                        </p>
-                    </div>
+                    <p class="justify-content-center">Sudah punya akun? <a href="{{ route('login') }}" class="text-danger">Login</a></p>
 
                 </div>
             </div>
@@ -91,10 +118,10 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('template/js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="{{ asset('template/js/main.js') }}"></script>
     <script>
-        @if (session('success'))
+        @if(session('success'))
             Swal.fire(
                 'Registration Successful!',
                 '{{ session('success') }}',
@@ -102,7 +129,7 @@
             );
         @endif
 
-        @if (session('error'))
+        @if(session('error'))
             Swal.fire(
                 'Registration Failed!',
                 '{{ session('error') }}',
